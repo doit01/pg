@@ -12,3 +12,15 @@ kubeadm
 https://kubernetes.io/zh/docs/reference/setup-tools/kubeadm/kubeadm-join/
 
 http://www.macrozheng.com/#/deploy/mall_swarm_deploy_k8s
+
+-- SCHEMA: public
+select current_timestamp,current_date from basic_id
+
+select date '2001-09-28' + integer '7' from basic_id
+select  date '2001-09-28' + interval '1 hour' from basic_id
+select make_date(2013, 7, 15)  from basic_id
+
+select age(timestamp '1957-06-13') from basic_id
+select justify_days(interval '35 days') from basic_id
+select make_time(8, 15, 23.5) from basic_id
+select  date '2001-10-01' - date '2001-09-28'  from basic_id
