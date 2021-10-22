@@ -1,5 +1,37 @@
 数据类型
 https://www.cnblogs.com/sanduzxcvbnm/p/13385011.html
+https://vladmihalcea.com/map-postgresql-range-column-type-jpa-hibernate/
+@Entity(name = "Book")
+@Table(name = "book")
+@TypeDef(
+    typeClass = PostgreSQLRangeType.class,
+    defaultForType = Range.class
+)
+public class Book {
+ 
+    @Id
+    @GeneratedValue
+    private Long id;
+ 
+    @NaturalId
+    private String isbn;
+ 
+    private String title;
+ 
+    @Column(
+        name = "price_cent_range",
+        columnDefinition = "numrange"
+    )
+    private Range<BigDecimal> priceRange;
+ 
+    @Column(
+        name = "discount_date_range",
+        columnDefinition = "daterange"
+    )
+    private Range<LocalDate> discountDateRange;
+ 
+    //Getters and setters omitted for brevity
+}
 
 https://www.cnblogs.com/mengzisama/p/13363541.html
 https://www.runoob.com/postgresql/postgresql-data-type.html
