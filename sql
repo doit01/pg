@@ -1,3 +1,6 @@
+数据类型
+https://www.cnblogs.com/sanduzxcvbnm/p/13385011.html
+
 https://www.cnblogs.com/mengzisama/p/13363541.html
 https://www.runoob.com/postgresql/postgresql-data-type.html
 导入命令 在161上执行
