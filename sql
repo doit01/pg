@@ -1,4 +1,5 @@
 数据类型
+https://github.com/vladmihalcea/hibernate-types
 https://www.cnblogs.com/sanduzxcvbnm/p/13385011.html
 https://vladmihalcea.com/map-postgresql-range-column-type-jpa-hibernate/
 @Entity(name = "Book")
