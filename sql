@@ -1,3 +1,25 @@
+#  psql -v  --username "postgres" --dbname "db1"
+#   CREATE DATABASE db1 WITH  OWNER = postgres  ENCODING = 'UTF8'     TABLESPACE = pg_default  CONNECTION LIMIT = 999;
+   
+    
+CREATE TABLE a ( id     integer);
+    CREATE USER u1 WITH PASSWORD 'u1';
+    GRANT all  ON DATABASE $POSTGRES_DB TO u1;
+    INSERT INTO public.a(id) VALUES (101);
+
+    GRANT select,insert,update  ON ALL TABLES    IN SCHEMA public TO u1;
+    GRANT all  ON ALL sequences IN SCHEMA public TO u1;
+
+    CREATE USER $PG_REP_USER REPLICATION LOGIN CONNECTION LIMIT 100 ENCRYPTED PASSWORD '$PG_REP_PASSWORD';
+
+    CREATE USER $PG_REP_USER WITH REPLICATION ENCRYPTED PASSWORD '$PG_REP_PASSWORD';
+    SELECT * FROM pg_create_physical_replication_slot('$SLAVE_SLOT');
+    select pg_reload_conf();
+
+生产环境 先用postgres启动生成表，再把用户改成u1，这样u1就不能删除表和数据了。
+或者用u1创建表，然后撤回删除权限，revoke
+
+
 数据类型
 https://github.com/vladmihalcea/hibernate-types
 https://www.cnblogs.com/sanduzxcvbnm/p/13385011.html
