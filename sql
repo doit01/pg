@@ -17,7 +17,8 @@ CREATE TABLE a ( id     integer);
     select pg_reload_conf();
 
 生产环境 先用postgres启动生成表，再把用户改成u1，这样u1就不能删除表和数据了。
-或者用u1创建表，然后撤回删除权限，revoke
+但是revoke 不太好用，
+revoke select,delete on all tables in schema public from u1;  但u1创建的表他仍然可以删掉。
 
 
 数据类型
