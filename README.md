@@ -1,3 +1,62 @@
+性能监控
+
+select * from pg_available_extensions; 开启的插件
+create extension pg_stat_statements; 
+select * from pg_stat_statements 
+pg_stat_statements must be loaded via shared_preload_libraries 
+
+1.修改配置参数
+
+vi $PGDATA/postgresql.conf  
+
+------ 
+
+shared_preload_libraries='pg_stat_statements'
+
+#加载pg_stat_statements模块
+
+ 
+
+track_io_timing = on
+
+#如果要跟踪IO消耗的时间，需要打开如上参数
+
+track_activity_query_size = 2048
+
+#设置单条SQL的最长长度，超过被截断显示（可选）
+
+ 
+
+#以下配置pg_stat_statements采样参数
+
+pg_stat_statements.max = 10000           
+
+# 在pg_stat_statements中最多保留多少条统计信息，通过LRU算法，覆盖老的记录。  
+
+pg_stat_statements.track = all           
+
+# all - (所有SQL包括函数内嵌套的SQL), top - 直接执行的SQL(函数内的sql不被跟踪), none - (不跟踪)
+
+pg_stat_statements.track_utility = off   
+
+# 是否跟踪非DML语句 (例如DDL，DCL)，on表示跟踪, off表示不跟踪  
+
+pg_stat_statements.save = on             
+
+# 重启后是否保留统计信息  
+
+------
+
+重启数据库
+————————————————
+版权声明：本文为CSDN博主「瀚高PG实验室」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/pg_hgdb/article/details/79594775
+
+pg_hba.conf 要把注释解除
+该模块必须通过在postgresql.conf的shared_preload_libraries中增加pg_stat_statements来载入，因为它需要额外的共享内存。
+
+这意味着增加或移除该模块需要一次服务器重启。
+
 
 ClusterControl
 监控PostgreSQL数据库性能监控手段之慢SQL、死锁
