@@ -8,43 +8,32 @@ pg_stat_statements must be loaded via shared_preload_libraries
 1.修改配置参数
 
 vi $PGDATA/postgresql.conf  
+在data/postgresql.conf中，进行配置：
+shared_preload_libraries = 'pg_stat_statements'，表示要在启动时导入pg_stat_statements 动态库。
+pg_stat_statements.max = 1000，表示监控的语句最多为1000句。
+pg_stat_statements.track = top # ，表示不监控嵌套的sql语句。all - (所有SQL包括函数内嵌套的SQL), top - 直接执行的SQL(函数内的sql不被跟踪), none - (不跟踪)
+pg_stat_statements.track_utility = true，表示对 INSERT/UPDATE/DELETE/SELECT 之外的sql动作也作监控。
+pg_stat_statements.save = true，  on 表示当postgresql停止时，把信息存入磁盘文件以备下次启动时再使用。
 
------- 
+重新启动 postgresql，创建sql语句：
 
-shared_preload_libraries='pg_stat_statements'
+create extension pg_stat_statements;
+
+查询哪些sql语句执行效率慢：
+
+    SELECT  query, calls, total_time, (total_time/calls) as average ,rows, 
+            100.0 * shared_blks_hit /nullif(shared_blks_hit + shared_blks_read, 0) AS hit_percent 
+    FROM    pg_stat_statements 
+    ORDER   BY average DESC LIMIT 10;
 
 #加载pg_stat_statements模块
-
- 
-
 track_io_timing = on
-
 #如果要跟踪IO消耗的时间，需要打开如上参数
-
 track_activity_query_size = 2048
-
 #设置单条SQL的最长长度，超过被截断显示（可选）
-
- 
-
 #以下配置pg_stat_statements采样参数
-
 pg_stat_statements.max = 10000           
-
 # 在pg_stat_statements中最多保留多少条统计信息，通过LRU算法，覆盖老的记录。  
-
-pg_stat_statements.track = all           
-
-# all - (所有SQL包括函数内嵌套的SQL), top - 直接执行的SQL(函数内的sql不被跟踪), none - (不跟踪)
-
-pg_stat_statements.track_utility = off   
-
-# 是否跟踪非DML语句 (例如DDL，DCL)，on表示跟踪, off表示不跟踪  
-
-pg_stat_statements.save = on             
-
-# 重启后是否保留统计信息  
-
 ------
 
 重启数据库
