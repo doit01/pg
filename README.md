@@ -1,4 +1,8 @@
 性能监控
+查询长事务sql
+select * from pg_stat_activity where state <> 'idle' 
+and (backend_xid is not null or backend_xmin is not null)  and now()-xact_start > interval'1 sec'::interval;
+
 
 select * from pg_available_extensions; 开启的插件
 create extension pg_stat_statements; 
