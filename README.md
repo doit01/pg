@@ -1,3 +1,8 @@
+SELECT created_date , jde_cost_number ,atch_number
+from ebr_basic_entity ebe  where jde_cost_number like '%42%' and position('42' in trim(leading '42' from jde_cost_number)) >1
+and substring(jde_cost_number from 1 for 2)= '42' and created_date >'2022-01-01 00:37:08'
+
+
 性能监控
 查询长事务sql
 select * from pg_stat_activity where state <> 'idle' 
