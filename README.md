@@ -1,3 +1,39 @@
+=====监控
+https://postgresql.blog.csdn.net/article/details/79594775?spm=1001.2101.3001.6661.1&utm_medium=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Edefault-1.pc_relevant_default&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Edefault-1.pc_relevant_default&utm_relevant_index=1
+当pg_stat_statements被载入时，它会跟踪该服务器 的所有数据库的统计信息。
+
+该模块提供了一个视图 pg_stat_statements以及函数pg_stat_statements_reset 和pg_stat_statements用于访问和操纵这些统计信息。
+
+这些视图 和函数不是全局可用的，但是可以用CREATE EXTENSION pg_stat_statements 为特定数据库启用它们
+————————————————
+版权声明：本文为CSDN博主「瀚高PG实验室」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/pg_hgdb/article/details/79594775
+
+查询pg全部设置
+select 
+"name", 
+"setting", 
+"unit", 
+"category", 
+"short_desc", 
+"extra_desc", 
+"context", 
+"vartype", 
+"source", 
+"min_val", 
+"max_val", 
+"enumvals", 
+"boot_val", 
+"reset_val", 
+"sourcefile", 
+"sourceline", 
+"pending_restart"
+from pg_settings ps
+-- where ps.name like '%statement_timeout%' 
+
+
+
+=====
 SELECT created_date , jde_cost_number ,atch_number
 from ebr_basic_entity ebe  where jde_cost_number like '%42%' and position('42' in trim(leading '42' from jde_cost_number)) >1
 and substring(jde_cost_number from 1 for 2)= '42' and created_date >'2022-01-01 00:37:08'
