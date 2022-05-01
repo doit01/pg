@@ -1,13 +1,66 @@
 =====监控
+最耗IO SQL，单次调用最耗IO SQL TOP 5
+
+select userid::regrole, dbid, query from pg_stat_statements order by (blk_read_time+blk_write_time)/calls desc limit 5;  
+
+总最耗IO SQL TOP 5
+
+select userid::regrole, dbid, query from pg_stat_statements order by (blk_read_time+blk_write_time) desc limit 5;  
+
+最耗时 SQL，单次调用最耗时 SQL TOP 5
+
+select userid::regrole, dbid, query from pg_stat_statements order by mean_time desc limit 5;  
+
+总最耗时 SQL TOP 5
+
+select userid::regrole, dbid, query from pg_stat_statements order by total_time desc limit 5;  
+
+
+响应时间抖动最严重 SQL
+
+select userid::regrole, dbid, query from pg_stat_statements order by stddev_time desc limit 5;  
+
+最耗共享内存 SQL
+
+select userid::regrole, dbid, query from pg_stat_statements order by (shared_blks_hit+shared_blks_dirtied) desc limit 5;  
+
+最耗临时空间 SQL
+
+select userid::regrole, dbid, query from pg_stat_statements order by temp_blks_written desc limit 5;  
+————————————————
+版权声明：本文为CSDN博主「瀚高PG实验室」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/pg_hgdb/article/details/79594775
+
+
 https://postgresql.blog.csdn.net/article/details/79594775?spm=1001.2101.3001.6661.1&utm_medium=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Edefault-1.pc_relevant_default&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7Edefault-1.pc_relevant_default&utm_relevant_index=1
 当pg_stat_statements被载入时，它会跟踪该服务器 的所有数据库的统计信息。
 
 该模块提供了一个视图 pg_stat_statements以及函数pg_stat_statements_reset 和pg_stat_statements用于访问和操纵这些统计信息。
 
 这些视图 和函数不是全局可用的，但是可以用CREATE EXTENSION pg_stat_statements 为特定数据库启用它们
+1.修改配置参数
+
+vi $PGDATA/postgresql.conf  
+
+------ 
+
+shared_preload_libraries='pg_stat_statements'
+
+#加载pg_stat_statements模块
+
+ 
+
+track_io_timing = on
+
+#如果要跟踪IO消耗的时间，需要打开如上参数
+
+track_activity_query_size = 2048
+
+#设置单条SQL的最长长度，超过被截断显示（可选）
 ————————————————
 版权声明：本文为CSDN博主「瀚高PG实验室」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
 原文链接：https://blog.csdn.net/pg_hgdb/article/details/79594775
+
 
 查询pg全部设置
 select 
