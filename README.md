@@ -1,3 +1,9 @@
+====高可用 pg pool
+https://www.postgresql.org/
+https://www.pgpool.net/docs/latest/en/html/tutorial-watchdog-intro.html#TUTORIAL-WATCHDOG-COORDINATING-NODES
+
+https://blog.csdn.net/zxfmamama/article/details/121008549?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-4.pc_relevant_aa&spm=1001.2101.3001.4242.3&utm_relevant_index=7
+
 =====监控
 最耗IO SQL，单次调用最耗IO SQL TOP 5
 
