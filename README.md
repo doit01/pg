@@ -1,3 +1,141 @@
+=====================全文检索
+select count(*) from pg_stat_activity;
+show max_connections
+-- 
+SELECT 'fat & rat'::tsquery; -- 'fat' & 'rat'
+
+
+SELECT to_tsquery('Fat:ab & Cats'); -- 'fat':AB & 'cat'
+
+SELECT to_tsquery('english', 'The & Fat & Rats'); --'fat' & 'rat'
+
+SELECT to_tsquery('chinese', 'The & Fat & Rats');
+SELECT 'fat & rat'::tsquery;
+
+
+
+--- .tsvector
+
+SELECT 'The Fat Rats Fat 中国 李白 中国'::tsvector; -- 按空格分词 分词的顺序是按照长短和字母排序的, 自动去掉分词中重复的词条
+
+SELECT 'a:1 fat:2 cat:3 sat:4 on:5 a:6 mat:7 and:8 ate:9 a:10 fat:11 rat:12'::tsvector --词条位置常量也可以放到词汇中
+
+SELECT 'a:1A fat:2B,4C cat:5D'::tsvector;  --拥有位置的词汇甚至可以用一个权来标记，反映文档结构，这个权可以是A，B，C或D。默认的是D，因此输出中不会出现  1表示位置，A表示权重
+
+SELECT to_tsvector('english', 'The Fat Rats');--to_tsvector函数对这些单词进行规范化处理, 罗列出词条并连同它们文档中的位置
+
+
+--- 基本文本匹配
+–全文检索基于匹配算子@@，当一个tsvector(理解成文章)匹配到一个tsquery（理解成用户输入）时，则返回true, tsvector和tsquery两种数据类型可以任意排序。
+
+SELECT 'a fat cat sat on a mat and ate a fat rat'::tsvector @@ 'cat & rat'::tsquery AS RESULT;
+SELECT 'cat & rat'::tsquery @@ 'a fat cat sat on a mat and ate a fat rat'::tsvector AS RESULT;
+
+SELECT 'fat & cow & mat & rat'::tsquery @@ 'a fat cat sat on a mat and ate a fat rat'::tsvector AS RESULT;
+
+SELECT 'a fat cat sat on a mat and ate a fat rat'::tsvector @@  'fat & cow & mat & rat'::tsquery  AS RESULT;
+
+
+– to_tsvector和to_tsquery标准化处理
+
+
+– to_tsvector和to_tsquery标准化处理
+
+SELECT to_tsvector('fat cats ate fat rats') @@ to_tsquery('fat & rat') AS RESULT;
+SELECT to_tsvector('fat cats ate fat rats') @@ to_tsquery('fat&rat') AS RESULT;   -- & means and 
+SELECT to_tsvector('fat cats ate fat rats') @@ to_tsquery('fat |cow') AS RESULT;  -- | means  or 
+
+4.分词器
+–查看所有分词器
+\dF
+–查看默认分词器
+
+show default_text_search_config;
+
+ default_text_search_config 
+----------------------------
+ pg_catalog.english
+(1 row)
+
+
+表和索引
+
+CREATE SCHEMA tsearch;
+CREATE TABLE tsearch.pgweb(id int, body text, title text, last_mod_date date);
+INSERT INTO tsearch.pgweb VALUES(1, 'China, officially the People''s Republic of China(PRC), located in Asia, is the world''s most populous state.', 'China', '2010-1-1');
+INSERT INTO tsearch.pgweb VALUES(2, 'America is a rock band, formed in England in 1970 by multi-instrumentalists Dewey Bunnell, Dan Peek, and Gerry Beckley.', 'America', '2010-1-1');
+INSERT INTO tsearch.pgweb VALUES(3, 'England is a country that is part of the United Kingdom. It shares land borders with Scotland to the north and Wales to the west.', 'England','2010-1-1');
+
+–- 将body字段中包含america的行打印出来
+
+SELECT id, body, title FROM tsearch.pgweb WHERE to_tsvector(body) @@ to_tsquery('america');
+
+-– 检索出在title或者body字段中包含china和asia的行
+SELECT * FROM tsearch.pgweb WHERE to_tsvector(title || ' ' || body) @@ to_tsquery('china & asia');
+
+–为了加速文本搜索，可以创建GIN索引(指定english配置来解析和规范化字符串)
+
+CREATE INDEX pgweb_idx_1 ON tsearch.pgweb USING gin(to_tsvector('english', body));
+
+–连接列的索引
+CREATE INDEX pgweb_idx_3 ON tsearch.pgweb USING gin(to_tsvector('english', title || ' ' || body));
+
+–查看索引定义
+
+\d+ tsearch.pgweb
+
+                            Table "tsearch.pgweb"
+    Column     |  Type   | Modifiers | Storage  | Stats target | Description 
+---------------+---------+-----------+----------+--------------+-------------
+ id            | integer |           | plain    |              | 
+ body          | text    |           | extended |              | 
+ title         | text    |           | extended |              | 
+ last_mod_date | date    |           | plain    |              | 
+Indexes:
+    "pgweb_idx_1" gin (to_tsvector('english'::regconfig, body)) TABLESPACE pg_default
+    "pgweb_idx_3" gin (to_tsvector('english'::regconfig, (title || ' '::text) || body)) TABLESPACE pg_default
+Has OIDs: no
+Options: orientation=row, compression=no
+
+6.清理数据
+
+drop schema tsearch cascade;
+
+课程作业
+
+1.用tsvector @@ tsquery和tsquery @@ tsvector完成两个基本文本匹配
+
+select to_tsvector('The quick brown fox jumps over the lazy dog') @@ to_tsquery('fox & dog');
+
+select to_tsquery('fox & cow') @@ to_tsvector('The quick brown fox jumps over the lazy dog');
+
+2.创建表且至少有两个字段的类型为 text类型，在创建索引前进行全文检索
+
+CREATE SCHEMA tsearch;
+CREATE TABLE tsearch.pgweb(id int, body text, title text, last_mod_date date);
+INSERT INTO tsearch.pgweb VALUES(1, 'China, officially the People''s Republic of China(PRC), located in Asia, is the world''s most populous state.', 'China', '2010-1-1');
+INSERT INTO tsearch.pgweb VALUES(2, 'America is a rock band, formed in England in 1970 by multi-instrumentalists Dewey Bunnell, Dan Peek, and Gerry Beckley.', 'America', '2010-1-1');
+INSERT INTO tsearch.pgweb VALUES(3, 'England is a country that is part of the United Kingdom. It shares land borders with Scotland to the north and Wales to the west.', 'England','2010-1-1');
+
+SELECT id, body, title FROM tsearch.pgweb WHERE to_tsvector(body) @@ to_tsquery('england');
+SELECT title FROM tsearch.pgweb WHERE to_tsquery('england & kingdom') @@ to_tsvector(title || ' ' || body);
+
+这里的title || ' ' || body，中间的空格字符串不能省略，不然会搜不到，这个我就不是很明白了。
+
+3.创建GIN索引
+
+CREATE INDEX pgweb_idx_1 ON tsearch.pgweb USING gin(to_tsvector('english', body));
+
+4.清理数据
+
+drop schema tsearch cascade;
+
+
+show client_encoding;
+=====================全文检索
+
+
+
 ====高可用 pg pool
 https://www.postgresql.org/
 https://www.pgpool.net/docs/latest/en/html/tutorial-watchdog-intro.html#TUTORIAL-WATCHDOG-COORDINATING-NODES
