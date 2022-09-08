@@ -1,3 +1,35 @@
+plugin
+timescaledb：时序数据库
+zhparser、pg_jieba、pg_scws、friso：中文分词
+
+pg_trgm、pg_bigm(没有3个分词限制)、pgroonga：模糊查询
+
+pg_similarity、cube、rum：相似查询
+
+pg_query_state：后台工作情况
+
+
+高可用
+pg_keeper：仅用于将standby切换为master, 或者自动降级.
+patroni
+pgpool-II
+stolon
+repmgr
+pacemaker + corosync
+PAF( PostgreSQL Automatic Failover )
+pg_auto_failover
+可观察性
+    client backends
+        pg_stat_ssl, pg_blocking_pids(), pg_stat_activity
+    query planning
+        EXPLAIN, pg_stat_statements
+    query execution
+        pg_stat_activity, pg_stat_statements, pg_stat_progress_create_index, pg_stat_progress_cluster, pg_prepared_xacts, pg_stat_kcache, pg_locks
+    indexes usage
+        pg_stat_all_indexes
+    tables usage
+        pg_stat_all_tables
+
 =====================全文检索
 select count(*) from pg_stat_activity;
 show max_connections
