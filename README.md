@@ -4,7 +4,7 @@ zhparser、pg_jieba、pg_scws、friso：中文分词
 
 pg_trgm、pg_bigm(没有3个分词限制)、pgroonga：模糊查询
 
-pg_similarity、cube、rum：相似查询
+pg_similarity、cube：相似查询
 
 pg_query_state：后台工作情况
 
