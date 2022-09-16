@@ -1,3 +1,6 @@
+pg流复制 逻辑复制
+优先用流复制，因为逻辑复制不支持DML 新增表
+
 plugin
 timescaledb：时序数据库
 zhparser、pg_jieba、pg_scws、friso：中文分词
