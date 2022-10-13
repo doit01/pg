@@ -1,3 +1,7 @@
+pg_stat_statements
+https://blog.csdn.net/ouyongke/article/details/125791388
+
+
 pg流复制 逻辑复制
 优先用流复制，因为逻辑复制不支持DML 新增表
 
