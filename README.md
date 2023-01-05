@@ -1,3 +1,7 @@
+citus对sql有限制。
+pgpool 负责，监控。
+最终方案。单库主备，分区表。
+
 pg_stat_statements
 https://blog.csdn.net/ouyongke/article/details/125791388
 
