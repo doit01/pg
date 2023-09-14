@@ -1,4 +1,5 @@
-citus对sql有限制。
+citus对sql有限制 分布表到各个节点，但没有解决高可用。
+Patroni 3.0 是citus推荐的高可用方案。
 pgpool 负责，监控。
 最终方案。单库主备，分区表。
 
